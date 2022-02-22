@@ -1,4 +1,5 @@
 from sklearn.datasets import load_svmlight_file
+import numpy as np
 
 DATASET = {
     "MNIST": "dataset/mnist/mnist.scale",

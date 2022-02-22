@@ -1,22 +1,21 @@
 import numpy as np
-
-
-def euclidian_distance(a, b):
-    return np.sqrt(np.sum(np.power((b - a), 2), axis=1))
+from collections import Counter
 
 
 class KNearestNeighbors:
-    def __init__(self, x_train, y_train, k_neighbors=5, n_classes=2):
+    def __init__(self, x_train, y_train, k_neighbors=5):
 
         self.x_train = x_train
         self.y_train = y_train
         self.k_neighbors = k_neighbors
-        self.n_classes = n_classes
+
+    def _distance_metric(self, a, b):
+        return np.sqrt(np.sum(np.power((a - b), 2)))
 
     def kneighbors(self, x_test, return_distance=False):
         dist = []
         neigh_idx = []
-        point_dist = [euclidian_distance(x_test, self.x_train) for x_test in x_test]
+        point_dist = [np.sqrt(np.sum(np.power((x_test - self.x_train), 2), axis=1)) for x_test in x_test]
         print("completed distances computation")
         for row in point_dist:
             enum_neigh = enumerate(row)
@@ -30,11 +29,12 @@ class KNearestNeighbors:
         return neigh_idx
 
     def predict(self, neigh_ind):
-        y_pred = np.array([np.argmax(np.bincount(self.y_train[idx])) for idx in neigh_ind])
+        y_pred = np.array([Counter(self.y_train[idx]).most_common(1)[0][0] for idx in neigh_ind])
         return y_pred
 
     def score(self, x_test, y_test):
-        y_pred = self.kneighbors(x_test)
+        neigh_idx = self.kneighbors(x_test)
+        y_pred = self.predict(neigh_idx)
         res = float(sum(y_pred == y_test)) / float(len(y_test))
-        print(res)
+        print("KNN accuracy: ", res)
         return res
