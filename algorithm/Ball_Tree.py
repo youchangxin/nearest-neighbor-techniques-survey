@@ -1,10 +1,8 @@
 import numpy as np
 from collections import Counter
 
-allow_duplicate = False
 
-
-class Ball():
+class Ball:
     def __init__(self, center, radius, points, left, right):
         self.center = center  # 使用该点即为球中心,而不去精确地去找最小外包圆的中心
         self.radius = radius
@@ -13,7 +11,7 @@ class Ball():
         self.points = points
 
 
-class BallTree():
+class BallTree:
     def __init__(self, values, labels, K=5):
         self.values = values
         self.labels = labels
@@ -41,16 +39,17 @@ class BallTree():
         data_disloc = np.row_stack((data[1:], data[0]))
         if np.sum(data_disloc - data) == 0:
             return Ball(data[0, :-1], 1e-100, data, None, None)
-        cur_center = np.mean(data[:, :-1], axis=0)  # 当前球的中心
-        dists_with_center = np.array([self.dist(cur_center, point) for point in data[:, :-1]])  # 当前数据点到球中心的距离
-        max_dist_index = np.argmax(dists_with_center)  # 取距离中心最远的点,为生成下一级两个子球做准备,同时这也是当前球的半径
+
+        cur_center = np.mean(data[:, :-1], axis=0)
+        dists_with_center = np.array([self.dist(cur_center, point) for point in data[:, :-1]])
+        max_dist_index = np.argmax(dists_with_center)
         max_dist = dists_with_center[max_dist_index]
         root = Ball(cur_center, max_dist, data, None, None)
         point1 = data[max_dist_index]
 
         dists_with_point1 = np.array([self.dist(point1[:-1], point) for point in data[:, :-1]])
         max_dist_index2 = np.argmax(dists_with_point1)
-        point2 = data[max_dist_index2]  # 取距离point1最远的点,至此,为寻找下一级的两个子球的准备工作搞定
+        point2 = data[max_dist_index2]
 
         dists_with_point2 = np.array([self.dist(point2[:-1], point) for point in data[:, :-1]])
         assign_point1 = dists_with_point1 < dists_with_point2
@@ -71,15 +70,8 @@ class BallTree():
         self.search_KNN_core(self.root, target)
         return Counter(node[0][-1] for node in self.KNN_result).most_common(1)[0][0]
 
-        # print("calu_dist_nums:",self.nums)
-
     def insert(self, root_ball, target):
         for node in root_ball.points:
-            self.nums += 1
-            is_duplicate = [self.dist(node[:-1], item[0][:-1]) < 1e-4 and
-                            abs(node[-1] - item[0][-1]) < 1e-4 for item in self.KNN_result if item[0] is not None]
-            if np.array(is_duplicate, np.bool).any() and not allow_duplicate:
-                continue
             distance = self.dist(target, node[:-1])
             if len(self.KNN_result) < self.K:
                 self.KNN_result.append((node, distance))
@@ -95,7 +87,6 @@ class BallTree():
         if root_ball.left is None or root_ball.right is None:
             self.insert(root_ball, target)
         if abs(self.dist(root_ball.center, target)) <= root_ball.radius + self.KNN_result[0][1]:
-            # or len(self.KNN_result) < K
             self.search_KNN_core(root_ball.left, target)
             self.search_KNN_core(root_ball.right, target)
 

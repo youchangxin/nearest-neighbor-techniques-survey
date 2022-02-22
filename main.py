@@ -10,8 +10,8 @@ if __name__ == '__main__':
     # y_test = np.expand_dims(y_test, axis=1)
     # test_data = np.concatenate([x_test, y_test], axis=1)
     # np.random.shuffle(test_data)
-    # x_test = test_data[:1000, :-1]
-    # y_test = test_data[:1000, -1:]
+    # x_test = test_data[:20000, :-1]
+    # y_test = test_data[:20000, -1:]
     # y_test = np.squeeze(y_test)
 
     model = KDTree(x_train, y_train)
