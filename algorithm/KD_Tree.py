@@ -13,7 +13,7 @@ class KDNode:
         self.visit = False
 
 
-class KDTree(KNearestNeighbors):
+class KDTree:
     def __init__(self, values, labels, K=5):
         self.values = values
         self.labels = labels
@@ -28,8 +28,8 @@ class KDTree(KNearestNeighbors):
         data = np.column_stack((self.values, self.labels))
         return self.build_KDTree_core(data, 0)
 
-    def dist(self,point1,point2):
-        return np.sqrt(np.sum((point1-point2)**2))
+    def dist(self, point1, point2):
+        return np.sqrt(np.sum((point1 - point2) ** 2))
 
     def build_KDTree_core(self, data, depth):
         if len(data) == 0:
@@ -64,32 +64,29 @@ class KDTree(KNearestNeighbors):
         return y_pred
 
     def _query(self, node, target):
-        if node is None:
+        if node is None or node.visit:
             return
         cur_data = node.value
-        label = node.label
-        distance = self.dist(cur_data, target)
-
-        if len(self.KNN_result) < self.K:
-            # 向结果中插入新元素
-            self.KNN_result.append((node, distance))
-        elif distance < self.KNN_result[0][1]:
-            # 替换结果中距离最大元素
-            self.KNN_result = self.KNN_result[1:] + [(node, distance)]
-        self.KNN_result = sorted(self.KNN_result, key=lambda x: -x[1])
-
         cuttint_dim = node.depth % self.dims_len
-        if abs(target[cuttint_dim] - cur_data[cuttint_dim]) < self.KNN_result[0][1] or len(self.KNN_result) < self.K:
-            # 在当前切分维度上,以target为中心,最近距离为半径的超体小球如果和该维度上的超平面有交集,那么说明可能还存在更近的数据点
-            # 同时如果还没找满K个点，也要继续寻找(这种有选择的比较,正是使用KD树进行KNN的优化之处,不用像一般KNN一样在整个数据集遍历)
-            self._query(node.left, target)
-            self._query(node.right, target)
-        # 在当前划分维度上,数据点小于超平面,那么久在左子树继续找,否则在右子树继续找
-        elif target[cuttint_dim] < cur_data[cuttint_dim]:
+
+        if target[cuttint_dim] < cur_data[cuttint_dim]:
             self._query(node.left, target)
         else:
             self._query(node.right, target)
 
+        node.visit = True
+        distance = self.dist(cur_data, target)
+        if len(self.KNN_result) < self.K:
+            self.KNN_result.append((node, distance))
+
+        if distance < self.KNN_result[0][1]:
+            self.KNN_result = self.KNN_result[1:] + [(node, distance)]
+        self.KNN_result = sorted(self.KNN_result, key=lambda x: -x[1])
+
+        if abs(target[cuttint_dim] - cur_data[cuttint_dim]) < self.KNN_result[0][1] or len(self.KNN_result) < self.K:
+            # 在当前切分维度上,以target为中心,最近距离为半径的超体小球如果和该维度上的超平面有交集,那么说明可能还存在更近的数据点
+            self._query(node.left, target)
+            self._query(node.right, target)
 
     def score(self, x_test, y_test):
         y_pred = [self.predict(point) for point in x_test]
