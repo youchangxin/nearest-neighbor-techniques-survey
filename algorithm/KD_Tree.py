@@ -1,6 +1,6 @@
 import numpy as np
 from collections import Counter
-from algorithm.KNN import KNearestNeighbors
+from utils import timeit
 
 
 class KDNode:
@@ -88,8 +88,7 @@ class KDTree:
             self._query(node.left, target)
             self._query(node.right, target)
 
+    @timeit
     def score(self, x_test, y_test):
         y_pred = [self.predict(point) for point in x_test]
-        res = float(sum(y_pred == y_test)) / float(len(y_test))
-        print("KD-Tree accuracy: ", res)
-        return res
+        return float(sum(y_pred == y_test)) / float(len(y_test))

@@ -1,6 +1,6 @@
 import numpy as np
 from collections import Counter
-from utils import timit
+from utils import timeit
 
 
 class KNearestNeighbors:
@@ -31,10 +31,9 @@ class KNearestNeighbors:
     def predict(self, perd_list):
         y_pred = np.array([Counter(perd).most_common(1)[0][0] for perd in perd_list])
         return y_pred
-    @timit
+
+    @timeit
     def score(self, x_test, y_test):
         perd_list = self.kneighbors(x_test)
         y_pred = self.predict(perd_list)
-        res = float(sum(y_pred == y_test)) / float(len(y_test))
-        print("KNN accuracy: ", res)
-        return res
+        return float(sum(y_pred == y_test)) / float(len(y_test))

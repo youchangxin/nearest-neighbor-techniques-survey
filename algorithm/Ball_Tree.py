@@ -1,5 +1,6 @@
 import numpy as np
 from collections import Counter
+from utils import timeit
 
 
 class Ball:
@@ -90,8 +91,7 @@ class BallTree:
             self.search_KNN_core(root_ball.left, target)
             self.search_KNN_core(root_ball.right, target)
 
+    @timeit
     def score(self, x_test, y_test):
         y_pred = [self.search_KNN(point) for point in x_test]
-        res = float(sum(y_pred == y_test)) / float(len(y_test))
-        print("Ball-Tree accuracy: ", res)
-        return res
+        return float(sum(y_pred == y_test)) / float(len(y_test))

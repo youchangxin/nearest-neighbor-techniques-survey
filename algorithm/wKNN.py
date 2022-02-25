@@ -1,8 +1,8 @@
 from algorithm.KNN import KNearestNeighbors
-import numpy as np
+from utils import timeit
 
 
-class WKNN(KNearestNeighbors):
+class Weighted_KNN(KNearestNeighbors):
     def _weight(self, pred_list, dists):
         weights = 1 / (dists + 1e-9)
         y_pred = []
@@ -16,9 +16,8 @@ class WKNN(KNearestNeighbors):
             y_pred.append(res)
         return y_pred
 
+    @timeit
     def score(self, x_test, y_test):
         pred_list, dists = self.kneighbors(x_test, return_distance=True)
         y_pred = self._weight(pred_list, dists)
-        res = float(sum(y_pred == y_test)) / float(len(y_test))
-        print("Weighted KNN accuracy: ", res)
-        return res
+        return float(sum(y_pred == y_test)) / float(len(y_test))

@@ -1,9 +1,10 @@
 import numpy as np
 from algorithm.KNN import KNearestNeighbors
 from sklearn.neighbors import KNeighborsClassifier
+from utils import timeit
 
 
-class CondensedKnn(KNearestNeighbors):
+class Condensed_NN(KNearestNeighbors):
 
     def __init__(self, x_train, y_train, k_neighbors=5):
         self.x_train = x_train
@@ -13,10 +14,9 @@ class CondensedKnn(KNearestNeighbors):
 
     def get_store(self):
         num_samples = np.size(self.x_train, 0)
-        num_columns = np.size(self.x_train, 1)
 
         # Print the initial number of instances in the condensed training set
-        print("\nBefore condensing: " + str(num_samples) + " training instances\n")
+        print("Before condensing: " + str(num_samples) + " training instances")
 
         # init the bins STORE and GRABBAG
         x_store = np.array(self.x_train[0, None])
@@ -93,12 +93,11 @@ class CondensedKnn(KNearestNeighbors):
             else:
                 no_more_transfers_to_store = True
 
-        print("After condensing: " + str(np.size(x_store, 0)) + " training instances\n")
+        print("After condensing: " + str(np.size(x_store, 0)) + " training instances")
         return x_store, y_store
 
+    @timeit
     def score(self, x_test, y_test):
         perd_list = self.kneighbors(x_test)
         y_pred = self.predict(perd_list)
-        res = float(sum(y_pred == y_test)) / float(len(y_test))
-        print("Condensed KNN accuracy: ", res)
-        return res
+        return float(sum(y_pred == y_test)) / float(len(y_test))
