@@ -14,7 +14,6 @@ class Condensed_NN(KNearestNeighbors):
 
     def get_store(self):
         num_samples = np.size(self.x_train, 0)
-
         # Print the initial number of instances in the condensed training set
         print("Before condensing: " + str(num_samples) + " training instances")
 
@@ -64,8 +63,6 @@ class Condensed_NN(KNearestNeighbors):
 
             remove_idx = []
             for idx in range(len(x_grabbage)):
-
-                # Record the actual class value
                 label = y_grabbage[idx]
 
                 one_nn = KNeighborsClassifier(n_neighbors=1)
@@ -73,13 +70,12 @@ class Condensed_NN(KNearestNeighbors):
                 y_pred = one_nn.predict(x_grabbage[idx])
                 # If actual class value is not equal to the prediction
                 # Append that instance to the store array
-                # Remove this instance from the condensed training_set
+                # else that instance to the grabbag array
                 if y_pred != label:
                     x_store = np.concatenate([x_store, x_grabbage[idx]], axis=0)
                     y_store = np.concatenate([y_store, y_grabbage[idx]], axis=0)
-                    transfers_made += 1
-                else:
                     remove_idx.append(idx)
+                    transfers_made += 1
             x_grabbage = np.delete(x_grabbage, remove_idx, axis=0)
             y_grabbage = np.delete(y_grabbage, remove_idx, axis=0)
 
