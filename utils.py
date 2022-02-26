@@ -21,7 +21,7 @@ DATASET = {
 
 def load_data(dataset):
     dataset = dataset.upper()
-    if dataset not in DATASET:
+    if dataset not in DATASET.keys():
         raise ValueError("unrecognized dataset: '%s'" % dataset)
 
     # load train dateset

@@ -9,7 +9,7 @@ from algorithm.KD_Tree import KDTree
 from algorithm.Ball_Tree import BallTree
 
 
-def benchmark(x_train, y_train, x_test, y_test, K=5):
+def benchmark(x_train, y_train, x_test, y_test, dataset, K=5):
     struct_pd = pd.DataFrame()
     unstruct_pd = pd.DataFrame()
 
@@ -30,8 +30,8 @@ def benchmark(x_train, y_train, x_test, y_test, K=5):
         new = pd.DataFrame({'Accuracy': acc, 'Time': time}, index=[algorithm])
         unstruct_pd = unstruct_pd.append(new)
 
-    struct_pd.to_csv("output/struct_benchmark.csv")
-    unstruct_pd.to_csv("output/unstruct_benchmark.csv")
+    struct_pd.to_csv("output/struct_" + dataset + ".csv")
+    unstruct_pd.to_csv("output/unstruct_" + dataset + ".csv")
 
 
 if __name__ == '__main__':
@@ -39,10 +39,12 @@ if __name__ == '__main__':
     # y_test = np.expand_dims(y_test, axis=1)
     # test_data = np.concatenate([x_test, y_test], axis=1)
     # np.random.shuffle(test_data)
-    # x_test = test_data[:10, :-1]
-    # y_test = test_data[:10, -1:]
+    # x_test = test_data[:1000, :-1]
+    # y_test = test_data[:1000, -1:]
     # y_test = np.squeeze(y_test)
 
-    benchmark(x_train, y_train, x_test, y_test, K=5)
+    dataset = ["SHUTTLE", "IJCNN1", "MNIST"]
+    for data in dataset:
+        benchmark(x_train, y_train, x_test, y_test, dataset=data, K=5)
 
 

@@ -70,7 +70,7 @@ class Condensed_NN(KNearestNeighbors):
                 y_pred = one_nn.predict(x_grabbage[idx])
                 # If actual class value is not equal to the prediction
                 # Append that instance to the store array
-                # else that instance to the grabbag array
+                # Delete instance from the grabbag array
                 if y_pred != label:
                     x_store = np.concatenate([x_store, x_grabbage[idx]], axis=0)
                     y_store = np.concatenate([y_store, y_grabbage[idx]], axis=0)
