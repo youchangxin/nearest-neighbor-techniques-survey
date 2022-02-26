@@ -14,7 +14,7 @@ class KDNode:
 
 
 class KDTree:
-    def __init__(self, values, labels, K=5):
+    def __init__(self, values, labels, k_neighbors=5):
         self.values = values
         self.labels = labels
         if len(self.values) == 0:
@@ -22,7 +22,7 @@ class KDTree:
         self.dims_len = self.values.shape[1]
         self.root = self.build_KDTree()
         self.KNN_result = []
-        self.K = K
+        self.K = k_neighbors
 
     def build_KDTree(self):
         data = np.column_stack((self.values, self.labels))

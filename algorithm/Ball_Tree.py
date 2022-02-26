@@ -13,10 +13,10 @@ class Ball:
 
 
 class BallTree:
-    def __init__(self, values, labels, K=5):
+    def __init__(self, values, labels, k_neighbors=5):
         self.values = values
         self.labels = labels
-        self.K = K
+        self.K = k_neighbors
         if len(self.values) == 0:
             raise Exception('Please input not empty data.')
         self.root = self.build_BallTree()
