@@ -77,6 +77,7 @@ class BallTree:
             return
         # 在合格的超体空间(必须是最后一层的子空间)内查找更近的数据点
         if root_ball.left is None or root_ball.right is None:
+            # loop in a ball
             for node in root_ball.points:
                 distance = self.dist(target, node[:-1])
                 if len(self.KNN_result) < self.K:
@@ -85,6 +86,7 @@ class BallTree:
                     self.KNN_result = self.KNN_result[1:] + [(node, distance)]
                 self.KNN_result = sorted(self.KNN_result, key=lambda x: -x[1])
 
+        # cuz the initial max distant in KNN_result is INF, first recursion will find the leaf node
         if abs(self.dist(root_ball.center, target)) <= root_ball.radius + self.KNN_result[0][1]:
             self._query(root_ball.left, target)
             self._query(root_ball.right, target)

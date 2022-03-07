@@ -5,8 +5,8 @@ from functools import wraps
 
 DATASET = {
     "MNIST": {
-        "TRAIN": "dataset/mnist/mnist.scale",
-        "TEST": "dataset/mnist/mnist.scale.t"
+        "TRAIN": "dataset/mnist/mnist",
+        "TEST": "dataset/mnist/mnist.t"
     },
     "IJCNN1": {
         "TRAIN": "dataset/ijcnn1/ijcnn1",
@@ -28,6 +28,9 @@ def load_data(dataset):
     train_data = load_svmlight_file(DATASET[dataset]["TRAIN"])
     x_train = train_data[0].toarray()
     y_train = train_data[1]
+
+    if dataset == "MNIST":
+        x_train = x_train[:, :778]
 
     # load test dateset
     test_data = load_svmlight_file(DATASET[dataset]["TEST"])
