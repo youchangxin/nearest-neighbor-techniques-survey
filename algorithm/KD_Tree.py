@@ -84,7 +84,8 @@ class KDTree:
         self.KNN_result = sorted(self.KNN_result, key=lambda x: -x[1])
 
         if abs(target[cuttint_dim] - cur_data[cuttint_dim]) < self.KNN_result[0][1] or len(self.KNN_result) < self.K:
-            # 在当前切分维度上,以target为中心,最近距离为半径的超体小球如果和该维度上的超平面有交集,那么说明可能还存在更近的数据点
+            # In current dimension, if the distance between target and current data point is less than the closest point
+            # in KNN_result, which indicates that there may be closer data points
             self._query(node.left, target)
             self._query(node.right, target)
 

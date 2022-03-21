@@ -15,12 +15,14 @@ class KNearestNeighbors:
     def kneighbors(self, x_test, return_distance=False):
         dist = []
         perd = []
+
+        # computing the distance between query and training dataset
         point_dist = [self._distance_metric(x_test, self.x_train) for x_test in x_test]
-        # print("completed distances computation")
         for row in point_dist:
-            enum_neigh = enumerate(row)
+            enum_neigh = enumerate(row)  # obtain the index
+            # sort by the distance and select top k result
             sorted_neigh = sorted(enum_neigh, key=lambda x: x[1])[:self.k_neighbors]
-            pred_list = [self.y_train[pair[0]] for pair in sorted_neigh]
+            pred_list = [self.y_train[pair[0]] for pair in sorted_neigh]  # according to the index get the label
             dist_list = [pair[1] for pair in sorted_neigh]
             dist.append(dist_list)
             perd.append(pred_list)

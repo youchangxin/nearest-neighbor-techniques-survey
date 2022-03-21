@@ -5,7 +5,7 @@ from utils import timeit
 
 class Ball:
     def __init__(self, center, radius, points, left, right):
-        self.center = center  # 使用该点即为球中心,而不去精确地去找最小外包圆的中心
+        self.center = center
         self.radius = radius
         self.left = left
         self.right = right
@@ -35,7 +35,7 @@ class BallTree:
             return None
         if len(data) == 1:
             return Ball(data[0, :-1], 0.001, data, None, None)
-        # 当每个数据点完全一样时,全部归为一个球,及时退出递归,不然会导致递归层数太深出现程序崩溃
+
         data_disloc = np.row_stack((data[1:], data[0]))
         if np.sum(data_disloc - data) == 0:
             return Ball(data[0, :-1], 1e-100, data, None, None)
@@ -71,11 +71,10 @@ class BallTree:
         self._query(self.root, target)
         return Counter(node[0][-1] for node in self.KNN_result).most_common(1)[0][0]
 
-    # root是一个Ball
     def _query(self, root_ball, target):
         if root_ball is None:
             return
-        # 在合格的超体空间(必须是最后一层的子空间)内查找更近的数据点
+        # find the leaf node
         if root_ball.left is None or root_ball.right is None:
             # loop in a ball
             for node in root_ball.points:
